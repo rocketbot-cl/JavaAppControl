@@ -6,7 +6,7 @@ This module can be used with "Java Recorder"
 <ul>
   <li>
     <strong>
-      <a href="https://github.com/rocketbot-cl/JavaRecorder/">Java Recorder</a>
+      <a href="https://market.rocketbot.co/?108#/module/JavaRecorder(BETA)">Java Recorder</a>
     </strong> 
   </li>  
 </ul>
