@@ -1,4 +1,4 @@
-# JavaApp Control
+# JavaApp Control (BETA)
 Module to automate Java applications.
 
 This module can be used with "Java Recorder"
