@@ -208,22 +208,6 @@ def search_children(app, indices, getText = False):
 		print("Error al encontrar el elemento")
 		return False
 
-def get_component_tree(vm_id, current_ptr):
-	global lista_comp
-	ac_info = AccessibleContextInfo()
-	if bridgeDll.getAccessibleContextInfo(vm_id, current_ptr, byref(ac_info)):
-		lista_comp.append([ac_info.name, ac_info.role, current_ptr])
-		for index in range(0, ac_info.childrenCount):
-			if ac_info.role_en_US != "unknown" and "visible" in ac_info.states_en_US:
-				ac_child = bridgeDll.getAccessibleChildFromContext(vm_id, current_ptr, index)
-				ac_child = c_int64(ac_child)
-				get_component_tree(vm_id, ac_child)
-
-def get_component(component):
-	for element in lista_comp:
-		if element[0] == component['name'] and element[1] == component['role']:
-			return element
-	return False
 
 def get_text(vm_id, new_ac):
 	textItemsInfo=AccessibleTextItemsInfo()
@@ -232,6 +216,7 @@ def get_text(vm_id, new_ac):
 
 
 def getACInfo(vm_id, current_ptr, current_context, parent_item):
+	global lista_comp
 	if bridgeDll.getAccessibleContextInfo(vm_id, current_ptr, byref(current_context)):
 		newItem = build_accesible_tree(current_context, vm_id, current_ptr, parent_item)
 		newItem.parent = parent_item
@@ -250,6 +235,8 @@ def build_accesible_tree(ac_info, vm_id, ac_ptr, parent_item):
 		item = JABObject(ac_info, vm_id, ac_ptr)
 		if parent_item != None:
 			parent_item.children.append(item)
+		global lista_comp
+		lista_comp.append(item)
 		return item
 	return None
 
@@ -257,6 +244,15 @@ def search_by_index(root, indices):
 	for index in indices:
 		root = root.children[index]
 	return root
+
+def search_component_in_list(componente):
+	#{"title":"Calculator PH","component":{"index":1,"name":"2","role":"push button"},"indices":[1,2,0,0,0,0]}
+	global lista_comp
+	for comp in lista_comp:
+		comp = comp.ac_info
+		if (componente["component"]["index"] == comp.indexInParent) and (componente["component"]["name"] == comp.name) and (componente["component"]["role"] == comp.role): 
+			return comp
+	return None
 
 
 def _errcheck(res, func, args):
