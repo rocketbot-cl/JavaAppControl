@@ -1,4 +1,4 @@
-# JavaApp Control
+# JavaApp Control (BETA)
 Module to automate Java applications.
 
 This module can be used with "Java Recorder"
@@ -6,7 +6,7 @@ This module can be used with "Java Recorder"
 <ul>
   <li>
     <strong>
-      <a href="https://github.com/NicoLiendro14/JavaRecorder">Java Recorder</a>
+      <a href="https://market.rocketbot.co/?108#/module/JavaRecorder(BETA)">Java Recorder</a>
     </strong> 
   </li>  
 </ul>
