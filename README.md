@@ -20,6 +20,11 @@ This module can be used with "Java Recorder"
 
 <img src="https://i.imgur.com/x2TwCFC.png"/>
 
+## Updates
+
+### 27-Oct-2020
+- Add a new way to find Java components
+
 ## Built With
 
 - [pyautogui](https://pyautogui.readthedocs.io/en/latest/) - PyAutoGUI lets your Python scripts control the mouse and keyboard to automate interactions with other applications..
