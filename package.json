@@ -9,7 +9,7 @@
     "windows":true,
     "mac":false,
     "docker":false,
-    "name": "JavaAppControl(BETA)",
+    "name": "JavaAppControl",
     "dependencies": {
 
     },
