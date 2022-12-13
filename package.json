@@ -2,7 +2,7 @@
     "author":"Nicolás Liendro",
     "description": "Modulo para automatizar aplicaciones Java",
     "disclaimer":"THERE IS NO WARRANTY FOR THE PROGRAM, TO THE EXTENT PERMITTED BY APPLICABLE LAW. EXCEPT WHEN OTHERWISE STATED IN WRITING THE COPYRIGHT HOLDERS AND/OR OTHER PARTIES PROVIDE THE PROGRAM “AS IS” WITHOUT WARRANTY OF ANY KIND, EITHER EXPRESSED OR IMPLIED, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE. THE ENTIRE RISK AS TO THE QUALITY AND PERFORMANCE OF THE PROGRAM IS WITH YOU. SHOULD THE PROGRAM PROVE DEFECTIVE, YOU ASSUME THE COST OF ALL NECESSARY SERVICING, REPAIR OR CORRECTION.",
-    "version":"0.1",
+    "version":"1.0.1",
     "license": "MIT",
     "homepage":"http://rocketbot.co/",
     "linux": false,
@@ -49,6 +49,10 @@
                             "es": "Propiedad de texto utilizada para encontrar una ventana Java particular cuando se ejecuta la actividad.",
                             "en": "Text property used to find a particular Java window when the activity is executed."
                         },
+                        "description": {
+                            "es": "Selector de ventana Java",
+                            "en": "Java window selector"
+                        },
                         "id": "Selector",
                         "css": "col-md-12"
                     },
@@ -65,6 +69,10 @@
                         "help": {
                             "en": "Variable where the result is stored without {}",
                             "es": "Variable donde se almacena el resultado sin {}"
+                        },
+                        "description": {
+                            "es": "Variable donde se almacena el resultado sin {}",
+                            "en": "Variable where the result is stored without {}"
                         },
                         "id": "result",
                         "css": "col-md-6"
@@ -112,6 +120,10 @@
                             "en": "Selector"
                         },
                         "help": {
+                            "es": "Propiedad de texto utilizada para encontrar un elemento de IU particular cuando se ejecuta la actividad.",
+                            "en": "Text property used to find a particular UI element when the activity is executed."
+                        },
+                        "description": {
                             "es": "Propiedad de texto utilizada para encontrar un elemento de IU particular cuando se ejecuta la actividad.",
                             "en": "Text property used to find a particular UI element when the activity is executed."
                         },
@@ -164,6 +176,10 @@
                             "es": "Propiedad de texto utilizada para encontrar un elemento de IU Java particular cuando se ejecuta la actividad. ",
                             "en": "Text property used to find a particular UI element when the activity is executed."
                         },
+                        "description": {
+                            "es": "Propiedad de texto utilizada para encontrar un elemento de IU Java particular cuando se ejecuta la actividad. ",
+                            "en": "Text property used to find a particular UI element when the activity is executed."
+                        }, 
                         "id": "Selector",
                         "css": "col-md-12"
                     },
@@ -178,6 +194,10 @@
                             "en": "Result"
                         },
                         "help": {
+                            "en": "Variable where the result is stored without {}",
+                            "es": "Variable donde se almacena el resultado sin {}"
+                        },
+                        "description": {
                             "en": "Variable where the result is stored without {}",
                             "es": "Variable donde se almacena el resultado sin {}"
                         },
@@ -229,6 +249,10 @@
                             "es": "Propiedad de texto utilizada para encontrar un elemento de IU Java particular cuando se ejecuta la actividad.",
                             "en": "Text property used to find a particular UI Java element when the activity is executed."
                         },
+                        "description": {
+                            "es": "Propiedad de texto utilizada para encontrar un elemento de IU Java particular cuando se ejecuta la actividad.",
+                            "en": "Text property used to find a particular UI Java element when the activity is executed."
+                        },
                         "id": "Selector",
                         "css": "col-md-12"
                     },
@@ -243,6 +267,10 @@
                             "en": "Text"
                         },
                         "help": {
+                            "en": "The string or variable that is to be written to the text attribute of a UI Java element.",
+                            "es": "Texto o variable que se vá a escribir en el atributo text del objeto Java."
+                        },
+                        "description": {
                             "en": "The string or variable that is to be written to the text attribute of a UI Java element.",
                             "es": "Texto o variable que se vá a escribir en el atributo text del objeto Java."
                         },
