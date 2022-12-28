@@ -1,29 +1,29 @@
 # JavaApp Control
   
-Module to automate Java applications  
+Modulo para automatizar aplicaciones Java  
 
 *Read this in other languages: [English](README.md), [Español](README.es.md).*
 
-## How to install this module
+## Como instalar este módulo
   
-__Download__ and __install__ the content in 'modules' folder in Rocketbot path  
+__Descarga__ e __instala__ el contenido en la carpeta 'modules' en la ruta de Rocketbot.  
 
 
 
 ## Overview
 
 
-1. Connect window  
-Connect a window
+1. Conectar ventana  
+Conectar una ventana
 
 2. Click  
-Do a click in a Java component
+Hace un click en un componente Java
 
-3. Get Text  
-Extracts a text value from a specified UI Java element.
+3. Obtener Texto  
+Extrae un valor de texto de un elemento de IU Java especificado.
 
 4. Set Text  
-Enables you to write a string to the text attribute of a specified UI Java element.  
+Le permite escribir una cadena en el atributo texto de un elemento de IU Java especificado.  
 
 
 
