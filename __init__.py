@@ -28,21 +28,27 @@ Para instalar librerias se debe ingresar por terminal a la carpeta "libs"
     Obtengo el modulo que fue invocado
 """
 
+import os
+import sys
+import traceback
+
 base_path = tmp_global_obj["basepath"]
-cur_path = base_path + 'modules' + os.sep + 'JavaApp Control' + os.sep + 'libs' + os.sep
-sys.path.append(cur_path)
+cur_path = os.path.join(base_path, 'modules', 'JavaAppControl', 'libs')
+
+cur_path_x64 = os.path.join(cur_path, 'Windows' + os.sep +  'x64' + os.sep)
+cur_path_x86 = os.path.join(cur_path, 'Windows' + os.sep +  'x86' + os.sep)
+
+if sys.maxsize > 2**32:
+    sys.path.append(cur_path_x64)
+else:
+    sys.path.append(cur_path_x86)
 
 import TkinterForm
 import JABHandle
 import PlayerController
-import requests
-import time
 import json
-import base64
 from ctypes import *
-import comtypes.client
 from ctypes import wintypes
-import win32gui
 
 
 module = GetParams("module")
@@ -62,17 +68,21 @@ if module == "JavaScope":
         result = GetParams("result")
         res = json.loads(selector)
         title = res['title']
+        
         hwnd_app = JABHandle.get_hwnd_by_title(title)
+        print(hwnd_app)
+        print(title)
         if hwnd_app:
-            global root_app
             SetVar(result, True)
             app_java = JABHandle.get_app_java_by_hwnd(hwnd_app)
+            print(app_java)
             current_context = JABHandle.AccessibleContextInfo()
             root_app = JABHandle.getACInfo(app_java['vm_id'], app_java['ac'], current_context, None)
 
         else:
             SetVar(result, False)
     except Exception as e:
+        traceback.print_exc()
         print("\x1B[" + "31;40mAn error occurred\u2193\x1B[" + "0m")
         PrintException()
         raise e
