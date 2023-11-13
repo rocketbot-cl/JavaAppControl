@@ -1,13 +1,18 @@
-# JavaApp Control
-  
-Module to automate Java applications  
 
-*Read this in other languages: [English](README.md), [Español](README.es.md).*
+
+
+
+# JavaAppControl
+  
+Module for clicking, writing and extracting text from Java applications  
+
+*Read this in other languages: [English](README.md), [Português](README.pr.md), [Español](README.es.md)*
 
 ## How to install this module
   
-__Download__ and __install__ the content in 'modules' folder in Rocketbot path  
-
+To install the module in Rocketbot Studio, it can be done in two ways:
+1. Manual: __Download__ the .zip file and unzip it in the modules folder. The folder name must be the same as the module and inside it must have the following files and folders: \__init__.py, package.json, docs, example and libs. If you have the application open, refresh your browser to be able to use the new module.
+2. Automatic: When entering Rocketbot Studio on the right margin you will find the **Addons** section, select **Install Mods**, search for the desired module and press install.  
 
 
 ## Overview
@@ -27,16 +32,13 @@ Enables you to write a string to the text attribute of a specified UI Java eleme
 
 
 
-### Changes
-Tue Oct 27 13:00:12 2020  Merge branch master of https://github.com/rocketbot-cl/JavaAppControl
-
 ----
 ### OS
 
 - windows
 
 ### Dependencies
-
+- [**PyAutoGUI**](https://pypi.org/project/PyAutoGUI/)
 ### License
   
 ![MIT](https://camo.githubusercontent.com/107590fac8cbd65071396bb4d04040f76cde5bde/687474703a2f2f696d672e736869656c64732e696f2f3a6c6963656e73652d6d69742d626c75652e7376673f7374796c653d666c61742d737175617265)  

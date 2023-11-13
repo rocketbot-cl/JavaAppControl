@@ -8,7 +8,7 @@ class Application(tk.Frame):
         self.pack()
         self.create_widgets()
         self.run_dll()
-        self.run_dll()
+        # self.run_dll()
 
     def create_widgets(self):
         self.hi_there = tk.Button(self)
@@ -21,11 +21,7 @@ class Application(tk.Frame):
         self.quit.pack(side="bottom")
 
     def say_hi(self):
-        print("Que onda")
-        hwnd = JABHandle.getHandle("Texty - Text Editor")
-        print("Handle: " + str(hwnd))
-        print("Ese fue el handle")
-        JABHandle.explorer(hwnd)
+        print("hi there, everyone!")
 
     def run_dll(self):
         JABHandle.initializeAccessBridge()

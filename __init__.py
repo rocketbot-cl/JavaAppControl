@@ -38,9 +38,9 @@ cur_path = os.path.join(base_path, 'modules', 'JavaAppControl', 'libs')
 cur_path_x64 = os.path.join(cur_path, 'Windows' + os.sep +  'x64' + os.sep)
 cur_path_x86 = os.path.join(cur_path, 'Windows' + os.sep +  'x86' + os.sep)
 
-if sys.maxsize > 2**32:
+if sys.maxsize > 2**32 and cur_path_x64 not in sys.path:
     sys.path.append(cur_path_x64)
-else:
+elif sys.maxsize < 2**32 and cur_path_x86 not in sys.path:
     sys.path.append(cur_path_x86)
 
 import TkinterForm
@@ -60,9 +60,10 @@ if module == "JavaScope":
     try:
         print("\t \t ***JavaScope*** \n")
         root = TkinterForm.tk.Tk()
+        root.withdraw()
         app = TkinterForm.Application(master=root)
         app.run_dll()
-        root.after(1000, lambda: root.destroy()) # Destroy the widget after 1 seconds
+        root.after(3000, lambda: root.destroy()) # Destroy the widget after 1 seconds
         app.mainloop()
         selector = GetParams("Selector")
         result = GetParams("result")
@@ -73,15 +74,15 @@ if module == "JavaScope":
         print(hwnd_app)
         print(title)
         if hwnd_app:
-            SetVar(result, True)
             app_java = JABHandle.get_app_java_by_hwnd(hwnd_app)
             print(app_java)
             current_context = JABHandle.AccessibleContextInfo()
             root_app = JABHandle.getACInfo(app_java['vm_id'], app_java['ac'], current_context, None)
-
+            SetVar(result, True)
         else:
             SetVar(result, False)
     except Exception as e:
+        SetVar(result, False)
         traceback.print_exc()
         print("\x1B[" + "31;40mAn error occurred\u2193\x1B[" + "0m")
         PrintException()
@@ -100,17 +101,18 @@ if module == "setClick":
                 bounds_component = {'x': componente.x, 'y': componente.y, 'width': componente.width, 'heigth': componente.height }
                 PlayerController.do_click(bounds_component)
             else:
-                    children = JABHandle.search_by_index(root_app, indices)
-                    componente1 = JABHandle.AccessibleContextInfo()
-                    JABHandle.bridgeDll.getAccessibleContextInfo(children.vm_id ,children.ac_ptr ,byref(componente1))
-                    bounds_component = {'x': componente1.x, 'y': componente1.y, 'width': componente1.width, 'heigth': componente1.height }
-                    #bounds_component = {'x': children.ac_info.x, 'y': children.ac_info.y, 'width': children.ac_info.width, 'heigth': children.ac_info.height }
-                    PlayerController.do_click(bounds_component)
+                children = JABHandle.search_by_index(root_app, indices)
+                componente1 = JABHandle.AccessibleContextInfo()
+                JABHandle.bridgeDll.getAccessibleContextInfo(children.vm_id ,children.ac_ptr ,byref(componente1))
+                bounds_component = {'x': componente1.x, 'y': componente1.y, 'width': componente1.width, 'heigth': componente1.height }
+                #bounds_component = {'x': children.ac_info.x, 'y': children.ac_info.y, 'width': children.ac_info.width, 'heigth': children.ac_info.height }
+                PlayerController.do_click(bounds_component)
         except:
             componente_tercera_busqueda = JABHandle.search_component_in_list(res)
             bounds_component = {'x': componente.x, 'y': componente.y, 'width': componente.width, 'heigth': componente.height }
             PlayerController.do_click(bounds_component)
     except Exception as e:
+        traceback.print_exc()
         print("\x1B[" + "31;40mAn error occurred\u2193\x1B[" + "0m")
         PrintException()
         raise e
@@ -136,6 +138,7 @@ if module == "getTextEvent":
             print("Este es el texto: " + str(texto))
             SetVar(result, texto)
     except Exception as e:
+        traceback.print_exc()
         print("\x1B[" + "31;40mAn error occurred\u2193\x1B[" + "0m")
         PrintException()
         raise e
