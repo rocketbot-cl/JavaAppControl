@@ -44,8 +44,8 @@
                     {
                         "type": "input",
                         "placeholder": {
-                            "es": "{ 'title': 'Titulo ventana' }",
-                            "en": "{ 'title': 'Window title' }"
+                            "es": "{ \"title\": \"Titulo ventana\" }",
+                            "en": "{ \"title\": \"Window title\" }"
                         },
                         "title": {
                             "es": "Selector",
