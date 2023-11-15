@@ -67,7 +67,7 @@ if module == "JavaScope":
         app.mainloop()
         selector = GetParams("Selector")
         result = GetParams("result")
-        res = json.loads(selector)
+        res = json.loads(selector.replace("'", '"'))
         title = res['title']
         
         hwnd_app = JABHandle.get_hwnd_by_title(title)
