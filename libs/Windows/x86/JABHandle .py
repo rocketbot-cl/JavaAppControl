@@ -1,44 +1,65 @@
 from ctypes import *
 import comtypes.client
+import win32com.client
 from ctypes import wintypes
 import win32gui
+import win32con
 import os
 from time import sleep
 import PlayerController
 
-jchar=c_wchar
-jint=c_int
-jfloat=c_float
-jboolean=c_bool
-
+jchar = c_wchar
+jint = c_int
+jfloat = c_float
+jboolean = c_bool
+bridgeEnabled = False
 bridgeDll = None
-MAX_STRING_SIZE=1024
-SHORT_STRING_SIZE=256
+MAX_STRING_SIZE = 1024
+SHORT_STRING_SIZE = 256
 handleInfo = []
 lista_comp = []
 
 def enableBridge():
+	global A11Y_PROPS_CONTENT
+	global bridgeEnabled
 	A11Y_PROPS_CONTENT = (
-		"assistive_technologies=com.sun.java.accessibility.AccessBridge\n"
-		"screen_magnifier_present=true\n"
+		"assistive_technologies=com.sun.java.accessibility.AccessBridge\nscreen_magnifier_present=true\n"
 	)
-	props = open(os.path.expanduser(r"~\.accessibility.properties"), "wt")
-	props.write(A11Y_PROPS_CONTENT)
+	with open(os.path.expanduser(r"~\.accessibility.properties"), "wt") as props:
+		props.write(A11Y_PROPS_CONTENT)
+
+	bridgeEnabled = True
 
 
 def initializeAccessBridge():
 	global bridgeDll
+	global bridgeEnabled
 	try:
-		enableBridge()
-		dir_path = os.path.dirname(os.path.realpath(__file__)) + os.sep
-		bridgeDll = cdll.LoadLibrary(dir_path + 'WindowsAccessBridge-32')
-		#enableBridge()
-		while(bridgeDll.Windows_run() != 1):
-			print("Estado de Access Bridge: " + str(bridgeDll.Windows_run()))
-		_fixBridgeFuncs()
-		print("Se cargo la DLL correctamente!")
+		if bridgeEnabled == False:
+			enableBridge()
+			load_library()
+		
+			while (bridgeDll.Windows_run() != 1):
+				print("Estado de Access Bridge: " + str(bridgeDll.Windows_run()))
+				sleep(1)
+		
+			_fixBridgeFuncs()
+			print("Se cargo la DLL correctamente!")
 	except:
 		print("Error al cargar la dll WindowsAccessBridge")
+
+
+def load_library():
+	global bridgeDll
+	dir_path = os.path.dirname(os.path.realpath(__file__)) + os.sep
+	print("DIRECTORY PATH: ", dir_path)
+	try:
+		bridgeDll = cdll.LoadLibrary(dir_path + 'WindowsAccessBridge-32')
+	except:
+		try:
+			bridgeDll = cdll.LoadLibrary(dir_path + 'WindowsAccessBridge-64')
+		except Exception as e:
+			print(e)
 
 def GetCursorPos():
     """
@@ -50,6 +71,7 @@ def GetCursorPos():
     windll.user32.GetCursorPos(byref(point))
     return point.x, point.y
 
+
 def getHandle(filter_):
     
 	handleInfo = []
@@ -60,32 +82,33 @@ def getHandle(filter_):
 		if win32gui.IsWindowVisible(hwnd):
 			handleInfo.append((hwnd, win32gui.GetWindowText(hwnd)))
 
-
 	win32gui.EnumWindows(winEnumHandler, None)
 	
 	handle = [handle for handle in handleInfo if handle[1] == filter_][0]
-	#print(handle)
+	print(handle)
 	return handle[0]
 
 def explorer(hwnd):
 	global bridgeDll
 	initializeAccessBridge()
-	vmID = vmid2 =c_long()
-	ac = accContext= c_int64()
+	vmID = vmid2 = c_long()
+	ac = accContext = c_int64()
 	try:
 		if (bridgeDll.isJavaWindow(hwnd) == 1):
 			print("Es una ventana Java!")
-			bridgeDll.getAccessibleContextFromHWND(hwnd,byref(vmID),byref(accContext))
+			bridgeDll.getAccessibleContextFromHWND(
+				hwnd, byref(vmID), byref(accContext))
 			#print("vmID: " + str(vmID) + "\n accContext: " + str(accContext))
 			print("ID Maquina Virtual de Java: " + str(vmID))
 			print("Esperando 3 segundos...")
 			sleep(3)
-			x,y = GetCursorPos()
+			x, y = GetCursorPos()
 			print("X: " + str(x) + ", Y: " + str(y))
 			bridgeDll.getAccessibleContextAt(vmID, accContext, x, y, byref(ac))
 			#print("Ac: " + str(ac))
-			accessibleContextInfo  = AccessibleContextInfo()
-			bridgeDll.getAccessibleContextInfo(vmID,accContext,byref(accessibleContextInfo))
+			accessibleContextInfo = AccessibleContextInfo()
+			bridgeDll.getAccessibleContextInfo(
+				vmID, accContext, byref(accessibleContextInfo))
 			print("Nombre del componente: " + str(accessibleContextInfo.name))
 			print("Nombre del role: " + str(accessibleContextInfo.role))
 			selector = get_selector(vmID, ac, hwnd)
@@ -96,7 +119,7 @@ def explorer(hwnd):
 def get_selector(vmID, ac, hwnd):
 	index_selector = []
 	title_app = ""
-	component  = AccessibleContextInfo()
+	component = AccessibleContextInfo()
 	bridgeDll.getAccessibleContextInfo(vmID,ac,byref(component))
 	while ac.value != 0:
 		accessibleContextInfo  = AccessibleContextInfo()
@@ -124,7 +147,7 @@ def get_selector(vmID, ac, hwnd):
 	return selector
 
 def winEnumHandler(hwnd, ctx):
-	global handleInfo 
+	global handleInfo
 	if win32gui.IsWindowVisible(hwnd):
 		handleInfo.append((hwnd, win32gui.GetWindowText(hwnd)))
 
@@ -138,15 +161,31 @@ def get_list_hwnd_java_apps():
 	return java_hwnd_apps
 
 def get_hwnd_by_title(title):
+	global handleInfo
+	handleInfo = []
 	win32gui.EnumWindows(winEnumHandler, None)
+	print("Listado ",handleInfo)
 	for hwnd in handleInfo:
 		#print(hwnd)
 		if hwnd[1] == title:
 			return hwnd
 	return ""
 
-def get_app_java_by_hwnd(hwnd):
+def get_app_java_by_hwnd(hwnd, not_maximize = False):
+    
+	print("WINDOW: ",bridgeDll.isJavaWindow(hwnd[0]))
+	
 	if bridgeDll.isJavaWindow(hwnd[0]) == 1:
+		try:
+			if not_maximize:
+				win32gui.ShowWindow(hwnd[0], win32con.SW_SHOWNORMAL)
+			else:
+				win32gui.ShowWindow(hwnd[0], win32con.SW_SHOWMAXIMIZED)
+			shell = win32com.client.Dispatch("WScript.Shell")
+			shell.SendKeys('%')
+			win32gui.SetForegroundWindow(hwnd[0])
+		except:
+			print("No se pudo maximizar la ventana")
 		vm_id = c_long()
 		ac = c_int64()
 		bridgeDll.getAccessibleContextFromHWND(hwnd[0], byref(vm_id), byref(ac))
@@ -159,11 +198,13 @@ def get_list_java_apps(java_hwnd_apps):
 		vm_id = c_long()
 		ac = c_int64()
 		bridgeDll.getAccessibleContextFromHWND(hwnd, byref(vm_id), byref(ac))
-		app_java  = AccessibleContextInfo()
-		bridgeDll.getAccessibleContextInfo(vm_id,ac,byref(app_java))
-		app_info = {'title' : app_java.name, 'ac' : ac, 'vm_id': vm_id}
+		app_java = AccessibleContextInfo()
+		bridgeDll.getAccessibleContextInfo(vm_id, ac, byref(app_java))
+		app_info = {'title': app_java.name,
+					'ac': ac, 'vm_id': vm_id, 'hwnd': hwnd}
 		java_apps.append(app_info)
 	return java_apps
+
 
 def get_app_java(title, java_apps):
 	for app in java_apps:
@@ -188,16 +229,16 @@ def search_children(app, indices, getText = False):
 	indices.reverse()
 	try:
 		for index in indices:
-			child_info  = AccessibleContextInfo()
-			bridgeDll.getAccessibleContextInfo(vm_id,ac,byref(child_info))
+			child_info = AccessibleContextInfo()
+			bridgeDll.getAccessibleContextInfo(vm_id, ac, byref(child_info))
 			child = bridgeDll.getAccessibleChildFromContext(vm_id, ac, index)
 			child = c_int64(child)
 			bridgeDll.releaseJavaObject(vm_id, ac)
 			ac = child
-		child_info  = AccessibleContextInfo()
-		bridgeDll.getAccessibleContextInfo(vm_id,ac,byref(child_info))
+		child_info = AccessibleContextInfo()
+		bridgeDll.getAccessibleContextInfo(vm_id, ac, byref(child_info))
 		textItemsInfo=AccessibleTextItemsInfo()
-		bridgeDll.getAccessibleTextItems(vm_id,ac,byref(textItemsInfo),0)
+		bridgeDll.getAccessibleTextItems(vm_id, ac, byref(textItemsInfo), 0)
 		bridgeDll.releaseJavaObject(vm_id, ac)
 		bridgeDll.releaseJavaObject(vm_id, child)
 		if getText == True:
@@ -205,6 +246,8 @@ def search_children(app, indices, getText = False):
 		else:
 			return child_info
 	except:
+		import traceback
+		traceback.print_exc()
 		print("Error al encontrar el elemento")
 		return False
 
@@ -218,17 +261,20 @@ def get_text(vm_id, new_ac):
 def getACInfo(vm_id, current_ptr, current_context, parent_item):
 	global lista_comp
 	if bridgeDll.getAccessibleContextInfo(vm_id, current_ptr, byref(current_context)):
-		newItem = build_accesible_tree(current_context, vm_id, current_ptr, parent_item)
+		newItem = build_accesible_tree(
+			current_context, vm_id, current_ptr, parent_item)
 		newItem.parent = parent_item
 		for index in range(0, current_context.childrenCount):
 			if current_context.role_en_US != "unknown" and "visible" in current_context.states_en_US:
 				child_context = AccessibleContextInfo()
-				ac_child_ptr = bridgeDll.getAccessibleChildFromContext(vm_id, current_ptr, index)
+				ac_child_ptr = bridgeDll.getAccessibleChildFromContext(
+					vm_id, current_ptr, index)
 				ac_child = c_int64(ac_child_ptr)
 				getACInfo(vm_id, ac_child, child_context, newItem)
 		return newItem
 	else:
 		current_context = AccessibleContextInfo()
+
 
 def build_accesible_tree(ac_info, vm_id, ac_ptr, parent_item):
 	if ac_info != None:
@@ -260,53 +306,59 @@ def _errcheck(res, func, args):
 		raise RuntimeError("Result %s" % res)
 	return res
 
-def _fixBridgeFunc(restype,name,*argtypes,**kwargs):
+
+def _fixBridgeFunc(restype, name, *argtypes, **kwargs):
 	try:
-		func=getattr(bridgeDll,name)
+		func = getattr(bridgeDll, name)
 	except AttributeError:
-		log.warning("%s not found in Java Access Bridge dll"%name)
+		print("%s not found in Java Access Bridge dll" % name)
 		return
-	func.restype=restype
-	func.argtypes=argtypes
+	func.restype = restype
+	func.argtypes = argtypes
 	if kwargs.get('errcheck'):
-		func.errcheck=_errcheck
+		func.errcheck = _errcheck
+
 
 def _fixBridgeFuncs():
 	"""Appropriately set the return and argument types of all the access bridge dll functions
 	"""
-	_fixBridgeFunc(c_int64,'getAccessibleParentFromContext',c_long,c_int64)
-	_fixBridgeFunc(c_int64,'getAccessibleChildFromContext',c_long,c_int64,jint,errcheck=True)
-	_fixBridgeFunc(c_bool,'getAccessibleTextItems',c_long, c_int64,POINTER(AccessibleTextItemsInfo), jint, _errcheck=True)
+	_fixBridgeFunc(c_int64, 'getAccessibleParentFromContext', c_long, c_int64)
+	_fixBridgeFunc(c_int64, 'getAccessibleChildFromContext',
+				   c_long, c_int64, jint, errcheck=True)
+	_fixBridgeFunc(c_bool, 'getAccessibleTextItems', c_long, c_int64,
+				   POINTER(AccessibleTextItemsInfo), jint, _errcheck=True)
 
 #Definitions of access bridge types, structs and prototypes
 
 class AccessibleContextInfo(Structure):
-    	_fields_=[
-		('name',wintypes.WCHAR*MAX_STRING_SIZE),
-		('description',wintypes.WCHAR*MAX_STRING_SIZE),
-		('role',wintypes.WCHAR*SHORT_STRING_SIZE),
-		('role_en_US',wintypes.WCHAR*SHORT_STRING_SIZE),
-		('states',wintypes.WCHAR*SHORT_STRING_SIZE),
-		('states_en_US',wintypes.WCHAR*SHORT_STRING_SIZE),
-		('indexInParent',jint),
-		('childrenCount',jint),
-		('x',jint),
-		('y',jint),
-		('width',jint),
-		('height',jint),
-		('accessibleComponent',wintypes.BOOL),
-		('accessibleAction',wintypes.BOOL),
-		('accessibleSelection',wintypes.BOOL),
-		('accessibleText',wintypes.BOOL),
-		('accessibleValue',wintypes.BOOL),
+    	_fields_ = [
+        ('name', wintypes.WCHAR * MAX_STRING_SIZE),
+        ('description', wintypes.WCHAR * MAX_STRING_SIZE),
+        ('role', wintypes.WCHAR * SHORT_STRING_SIZE),
+        ('role_en_US', wintypes.WCHAR * SHORT_STRING_SIZE),
+        ('states', wintypes.WCHAR * SHORT_STRING_SIZE),
+        ('states_en_US', wintypes.WCHAR * SHORT_STRING_SIZE),
+        ('indexInParent', jint),
+        ('childrenCount', jint),
+        ('x', jint),
+        ('y', jint),
+        ('width', jint),
+        ('height', jint),
+        ('accessibleComponent', wintypes.BOOL),
+        ('accessibleAction', wintypes.BOOL),
+        ('accessibleSelection', wintypes.BOOL),
+        ('accessibleText', wintypes.BOOL),
+        ('accessibleValue', wintypes.BOOL),
 	]
 
+
 class AccessibleTextItemsInfo(Structure):
-	_fields_=[
-		('letter',wintypes.WCHAR),
-		('word',wintypes.WCHAR*SHORT_STRING_SIZE),
-		('sentence',wintypes.WCHAR*MAX_STRING_SIZE),
+	_fields_ = [
+        ('letter', wintypes.WCHAR),
+        ('word', wintypes.WCHAR * SHORT_STRING_SIZE),
+        ('sentence', wintypes.WCHAR * MAX_STRING_SIZE),
 	]
+
 
 class JABObject():
 	def __init__(self, data, vm_id, ac_ptr):

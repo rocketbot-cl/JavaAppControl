@@ -1,5 +1,5 @@
 {
-    "author":"Nicolás Liendro",
+    "author":"Nicolás Liendro - Juan Siro",
     "description": "Module to automate Java applications | Módulo para automatizar aplicaciones Java",
     "description_lang": {
         "en": "Module for clicking, writing and extracting text from Java applications",
@@ -7,7 +7,7 @@
         "pr": "Módulo para clicar, escrever e extrair texto de aplicações Java"
       },
     "disclaimer":"THERE IS NO WARRANTY FOR THE PROGRAM, TO THE EXTENT PERMITTED BY APPLICABLE LAW. EXCEPT WHEN OTHERWISE STATED IN WRITING THE COPYRIGHT HOLDERS AND/OR OTHER PARTIES PROVIDE THE PROGRAM “AS IS” WITHOUT WARRANTY OF ANY KIND, EITHER EXPRESSED OR IMPLIED, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE. THE ENTIRE RISK AS TO THE QUALITY AND PERFORMANCE OF THE PROGRAM IS WITH YOU. SHOULD THE PROGRAM PROVE DEFECTIVE, YOU ASSUME THE COST OF ALL NECESSARY SERVICING, REPAIR OR CORRECTION.",
-    "version":"1.2.0",
+    "version":"1.2.4",
     "license": "MIT",
     "homepage":"http://rocketbot.com/",
     "linux": false,
@@ -60,7 +60,28 @@
                             "en": "Java window selector"
                         },
                         "id": "Selector",
-                        "css": "col-md-12"
+                        "css": "col-md-6"
+                    },
+                    {
+                        "type": "checkbox",
+                        "placeholder": {
+                            "es": "False",
+                            "en": "False"
+                        },
+                        "title": {
+                            "es": "No Maximizar",
+                            "en": "Do not maximize"
+                        },
+                        "help": {
+                            "en": "If selected, the window will not be maximized.",
+                            "es": "Si se selecciona, la ventana no se maximizará."
+                        },
+                        "description": {
+                            "es": "Si se selecciona, la ventana no se maximizará.",
+                            "en": "If selected, the window will not be maximized."
+                        },
+                        "id": "not_maximize",
+                        "css": "col-md-6"
                     },
                     {
                         "type": "input",

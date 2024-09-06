@@ -54,6 +54,7 @@ from ctypes import wintypes
 module = GetParams("module")
 global root
 global hwnd_app
+global hwnd_app_no_max
 global root_app
 
 if module == "JavaScope":
@@ -67,14 +68,15 @@ if module == "JavaScope":
         app.mainloop()
         selector = GetParams("Selector")
         result = GetParams("result")
+        hwnd_app_no_max = eval(GetParams("not_maximize")) if GetParams("not_maximize") else False
         res = json.loads(selector.replace("'", '"'))
         title = res['title']
         
         hwnd_app = JABHandle.get_hwnd_by_title(title)
-        print(hwnd_app)
-        print(title)
+        print("Handler app ", hwnd_app)
+        print("Title app ", title)
         if hwnd_app:
-            app_java = JABHandle.get_app_java_by_hwnd(hwnd_app)
+            app_java = JABHandle.get_app_java_by_hwnd(hwnd_app, hwnd_app_no_max)
             print(app_java)
             current_context = JABHandle.AccessibleContextInfo()
             root_app = JABHandle.getACInfo(app_java['vm_id'], app_java['ac'], current_context, None)
@@ -94,7 +96,7 @@ if module == "setClick":
         selector = GetParams("Selector")
         res = json.loads(selector)
         indices = res['indices']
-        app_java = JABHandle.get_app_java_by_hwnd(hwnd_app)
+        app_java = JABHandle.get_app_java_by_hwnd(hwnd_app, hwnd_app_no_max)
         componente = JABHandle.search_children(app_java, indices)
         try:
             if componente != False:
@@ -109,7 +111,7 @@ if module == "setClick":
                 PlayerController.do_click(bounds_component)
         except:
             componente_tercera_busqueda = JABHandle.search_component_in_list(res)
-            bounds_component = {'x': componente.x, 'y': componente.y, 'width': componente.width, 'heigth': componente.height }
+            bounds_component = {'x': componente_tercera_busqueda.x, 'y': componente_tercera_busqueda.y, 'width': componente_tercera_busqueda.width, 'heigth': componente_tercera_busqueda.height }
             PlayerController.do_click(bounds_component)
     except Exception as e:
         traceback.print_exc()
@@ -119,11 +121,12 @@ if module == "setClick":
 
 if module == "getTextEvent":
     try:
+        print("\t \t ***GetText*** \n")
         selector = GetParams("Selector")
         result = GetParams("result")
         res = json.loads(selector)
         indices = res['indices']
-        app_java = JABHandle.get_app_java_by_hwnd(hwnd_app)
+        app_java = JABHandle.get_app_java_by_hwnd(hwnd_app, hwnd_app_no_max)
         componente, textItemsInfo = JABHandle.search_children(app_java, indices, True)
         try:
             if componente != False:
@@ -150,7 +153,7 @@ if module == "setText":
         text = GetParams("Text")
         res = json.loads(selector)
         indices = res['indices']
-        app_java = JABHandle.get_app_java_by_hwnd(hwnd_app)
+        app_java = JABHandle.get_app_java_by_hwnd(hwnd_app, hwnd_app_no_max)
         componente = JABHandle.search_children(app_java, indices)
         try:
             if componente != False:

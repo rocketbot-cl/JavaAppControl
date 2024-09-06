@@ -23,7 +23,8 @@ Para instalar el módulo en Rocketbot Studio, se puede hacer de dos formas:
 Conectar una ventana
 |Parámetros|Descripción|ejemplo|
 | --- | --- | --- |
-|Selector|Selector de ventana Java|{ title: 'Titulo ventana' }|
+|Selector|Selector de ventana Java|{ "title": "Titulo ventana" }|
+|No Maximizar|Si se selecciona, la ventana no se maximizará.|False|
 |Resutlado|Variable donde se almacena el resultado sin {}|{resultado}|
 
 ### Click

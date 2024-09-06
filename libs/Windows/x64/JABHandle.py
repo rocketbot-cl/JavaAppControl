@@ -14,6 +14,7 @@ jfloat = c_float
 jboolean = c_bool
 
 bridgeDll = None
+bridgeEnabled = False
 MAX_STRING_SIZE = 1024
 SHORT_STRING_SIZE = 256
 handleInfo = []
@@ -21,22 +22,30 @@ lista_comp = []
 
 def enableBridge():
 	global A11Y_PROPS_CONTENT
+	global bridgeEnabled
 	A11Y_PROPS_CONTENT = (
 		"assistive_technologies=com.sun.java.accessibility.AccessBridge\nscreen_magnifier_present=true\n"
 	)
 	with open(os.path.expanduser(r"~\.accessibility.properties"), "wt") as props:
 		props.write(A11Y_PROPS_CONTENT)
 
+	bridgeEnabled = True
+
 
 def initializeAccessBridge():
 	global bridgeDll
+	global bridgeEnabled
 	try:
-		enableBridge()
-		load_library()
-		while (bridgeDll.Windows_run() != 1):
-			print("Estado de Access Bridge: " + str(bridgeDll.Windows_run()))
-		_fixBridgeFuncs()
-		print("Se cargo la DLL correctamente!")
+		if bridgeEnabled == False:
+			enableBridge()
+			load_library()
+		
+			while (bridgeDll.Windows_run() != 1):
+				print("Estado de Access Bridge: " + str(bridgeDll.Windows_run()))
+				sleep(1)
+		
+			_fixBridgeFuncs()
+			print("Se cargo la DLL correctamente!")
 	except:
 		print("Error al cargar la dll WindowsAccessBridge")
 
@@ -44,6 +53,7 @@ def initializeAccessBridge():
 def load_library():
 	global bridgeDll
 	dir_path = os.path.dirname(os.path.realpath(__file__)) + os.sep
+	print("DIRECTORY PATH: ", dir_path)
 	try:
 		bridgeDll = cdll.LoadLibrary(dir_path + 'WindowsAccessBridge-32')
 	except:
@@ -162,13 +172,16 @@ def get_hwnd_by_title(title):
 			return hwnd
 	return ""
 
-def get_app_java_by_hwnd(hwnd):
+def get_app_java_by_hwnd(hwnd, not_maximize = False):
     
-	print("WINDOW: ",bridgeDll.isJavaWindow(hwnd[0]))
+	print("WINDOW: ", bridgeDll.isJavaWindow(hwnd[0]))
 	
 	if bridgeDll.isJavaWindow(hwnd[0]) == 1:
 		try:
-			win32gui.ShowWindow(hwnd[0], win32con.SW_SHOWMAXIMIZED)
+			if not_maximize:
+				win32gui.ShowWindow(hwnd[0], win32con.SW_SHOWNORMAL)
+			else:
+				win32gui.ShowWindow(hwnd[0], win32con.SW_SHOWMAXIMIZED)
 			shell = win32com.client.Dispatch("WScript.Shell")
 			shell.SendKeys('%')
 			win32gui.SetForegroundWindow(hwnd[0])
