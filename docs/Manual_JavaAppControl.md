@@ -23,7 +23,8 @@ To install the module in Rocketbot Studio, it can be done in two ways:
 Connect a window
 |Parameters|Description|example|
 | --- | --- | --- |
-|Selector|Java window selector|{ title: 'Window title' }|
+|Selector|Java window selector|{ "title": "Window title" }|
+|Do not maximize|If selected, the window will not be maximized.|False|
 |Result|Variable where the result is stored without {}|{result}|
 
 ### Click
